@@ -25,5 +25,10 @@ Squads can only halt a certain distance from other halted squads:
 
 ### Building
 * Use [ILSpy](https://github.com/icsharpcode/ILSpy) or a similar tool to decompile Assembly-CSharp.dll
-* Apply .xdelta patches to each decompiled .cs file
+* Either
+    * Apply .xdelta patches to each decompiled .cs file
+	* Use patch.exe from e.g. your Git installation to apply Mod.Patch on all files in the directory
 * Build a new Assembly-CSharp.dll from the patched .cs files, you can do this with the Visual Studio Project that ILSpy provides
+
+### Contributing
+* Note that you need to use dos2unix after creating a patch with diff.exe otherwise in Windows it will not work with patch.exe

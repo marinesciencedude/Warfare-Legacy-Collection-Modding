@@ -1,0 +1,264 @@
+
+
+2025-03-05 15:37 diff -url '--exclude=*.csproj' '--exclude=*.sln' '--exclude=bin' '--exclude=obj' '--exclude=.vs' Source/Soldier.cs warfare-halt/Soldier.cs Page 1
+
+
+--- Source/Soldier.cs	2025-02-26 21:15:35.359165300 +0000
++++ warfare-halt/Soldier.cs	2025-03-01 13:49:29.629538300 +0000
+@@ -693,10 +693,10 @@
+ 		SetIntent(Activity.None, DoHalt);
+ 		IEnumerator DoHalt()
+ 		{
+-			actionStack.Clear();
++			//actionStack.Clear();
+ 			EstablishEngagementPosture();
+ 			yield return null;
+-			StopAllCoroutines();
++			//StopAllCoroutines();
+ 		}
+ 	}
+ 
+@@ -1280,11 +1280,13 @@
+ 			LogState("DoAdvance()");
+ 			CheckDebugBreakActivity();
+ 			StopFiring();
+-			SetPosture(Posture.Standing, moving: true);
++			if (!squad.halted)
++				SetPosture(Posture.Standing, moving: true);
+ 			while (true)
+ 			{
+ 				CheckDebugBreakActivity();
+-				MoveForward();
++				if (!squad.halted)
++					MoveForward();
+ 				yield return null;
+ 			}
+ 		}
+@@ -1322,7 +1324,8 @@
+ 		while ((bool)squad.MyEnemy)
+ 		{
+ 			CheckDebugBreakActivity();
+-			UpdateEngagedMovement();
++			if(!squad.halted)
++				UpdateEngagedMovement();
+ 			yield return null;
+ 		}
+ 		StopFiring();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2025-03-05 15:37 diff -url '--exclude=*.csproj' '--exclude=*.sln' '--exclude=bin' '--exclude=obj' '--exclude=.vs' Source/Squad.cs warfare-halt/Squad.cs Page 1
+
+
+--- Source/Squad.cs	2025-02-27 00:43:45.654442500 +0000
++++ warfare-halt/Squad.cs	2025-03-01 13:38:54.929836600 +0000
+@@ -772,12 +772,13 @@
+ 
+ 	public void Halt()
+ 	{
+-		StopAllCoroutines();
++		//StopAllCoroutines();
+ 		activity = Activity.Halted;
+ 		EachSoldier(delegate(Soldier soldier)
+ 		{
+ 			soldier.Halt();
+-		});
++            soldier.SetPosture(Soldier.Posture.Standing, moving: false);
++        });
+ 	}
+ 
+ 	private void CheckDebugBreak()
+@@ -881,7 +882,9 @@
+ 			}
+ 			yield return null;
+ 		}
+-		MaybeSay(SoldierSpeech.SpeechType.EnemyDown, 5f);
++		if (halted)
++			activity = Activity.Halted;
++        MaybeSay(SoldierSpeech.SpeechType.EnemyDown, 5f);
+ 	}
+ 
+ 	private IEnumerator DoEngagement()
+@@ -1071,10 +1074,8 @@
+ 	private List<Warfare.CommandType> GetPossibleCommands()
+ 	{
+ 		List<Warfare.CommandType> list = new List<Warfare.CommandType>();
+-		if (type != Warfare.SquadType.Tank)
+-		{
+-			list.Add(Warfare.CommandType.Advance);
+-		}
++		list.Add(Warfare.CommandType.Halt);
++		list.Add(Warfare.CommandType.Advance);
+ 		switch (type)
+ 		{
+ 		case Warfare.SquadType.Assault:
+@@ -1183,7 +1184,12 @@
+ 	protected void SpecialAttackAdvance(Warfare.CommandType type, Vector2 position)
+ 	{
+ 		LogState(base.gameObject.name + ".SpecialAttackAdvance");
+-		SpendCommandPoints(type);
++		halted = false;
++        EachSoldier(delegate (Soldier soldier)
++        {
++            soldier.SetPosture(Soldier.Posture.Standing, moving: true);
++        });
++        SpendCommandPoints(type);
+ 		if ((bool)cover)
+ 		{
+ 			LogState(base.gameObject.name + ".SpecialAttackAdvance: LeaveCover()");
+
+
+
+
+
+
+
+2025-03-05 15:37 diff -url '--exclude=*.csproj' '--exclude=*.sln' '--exclude=bin' '--exclude=obj' '--exclude=.vs' Source/Squad.cs warfare-halt/Squad.cs Page 2
+
+
+@@ -1263,7 +1269,25 @@
+ 
+ 	protected bool MayHalt()
+ 	{
+-		return activity != Activity.Halted;
++		if (activity != Activity.Halted && !isInCover)
++		{
++			float mindist = 2f;
++
++            bool DistancePredicate(Squad other)
++            {
++                return MathF.Abs(BattleController.SquadDelta(this, other)) <= mindist;
++            }
++            Func<Squad, float> comparator = (Squad other) => BattleController.SquadDelta(this, other);
++            Squad squadTooNear =
++			(from other in battleController.AllSquads()
++            where other.army == army && other.lane == lane && other.halted && DistancePredicate(other)
++            orderby comparator(other) descending
++            select other).FirstOrDefault();
++
++            if (GetCoverNearPosition(x, mindist) == null && battleController.GetCoverNearPosition(this, x, lane, -direction, mindist) == null && squadTooNear == null)
++				return true;
++		}
++		return false;
+ 	}
+ 
+ 	protected void CommandHalt(Warfare.CommandType type)
+@@ -1271,8 +1295,23 @@
+ 		SpecialAttackHalt(type, Vector2.zero);
+ 	}
+ 
+-	protected void SpecialAttackHalt(Warfare.CommandType type, Vector2 position)
++    bool m_halted;
++    public bool halted
++    {
++        get
++        {
++            return m_halted;
++        }
++
++        set
++        {
++            m_halted = value;
++        }
++    }
++
++    protected void SpecialAttackHalt(Warfare.CommandType type, Vector2 position)
+ 	{
++		halted = true;
+ 		SpendCommandPoints(type);
+ 		Halt();
+ 	}
+
+
+
+
+
+
+
+
+
+
+
+2025-03-05 15:37 diff -url '--exclude=*.csproj' '--exclude=*.sln' '--exclude=bin' '--exclude=obj' '--exclude=.vs' Source/SquadTank.cs warfare-halt/SquadTank.cs Page 1
+
+
+--- Source/SquadTank.cs	2025-02-26 21:15:34.313096700 +0000
++++ warfare-halt/SquadTank.cs	2025-03-01 13:54:45.629298000 +0000
+@@ -206,4 +206,9 @@
+ 		}
+ 		return damage;
+ 	}
++
++    public override bool MayAdvance()
++	{
++        return true;
++    }
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
