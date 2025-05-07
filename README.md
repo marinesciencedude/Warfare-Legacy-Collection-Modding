@@ -28,6 +28,7 @@ Squads can only halt a certain distance from other halted squads:
 * Either
     * Apply .xdelta patches to each decompiled .cs file
 	* Use patch.exe from e.g. your Git installation to apply Mod.Patch on all files in the directory
+* Add Unity.VisualScripting.Core.dll as a dependency
 * Build a new Assembly-CSharp.dll from the patched .cs files, you can do this with the Visual Studio Project that ILSpy provides
 
 ### Contributing
