@@ -1,0 +1,66 @@
+
+
+2025-05-12 10:07 diff -url '--exclude=*.csproj' '--exclude=*.sln' '--exclude=bin' '--exclude=obj' '--exclude=.vs' Source/Soldier.cs warfare-permanent-corpses/Soldier.cs Page 1
+
+
+--- Source/Soldier.cs	2025-05-07 19:15:35.785781000 +0100
++++ warfare-permanent-corpses/Soldier.cs	2025-05-12 09:30:12.073339500 +0100
+@@ -1772,7 +1772,7 @@
+ 		}
+ 		isAlive = false;
+ 		battleController.OnSoldierDied(this, lethalDamage);
+-		StartCoroutine(DoDeathDance());
++		/*StartCoroutine(DoDeathDance());
+ 		IEnumerator DoDeathDance()
+ 		{
+ 			yield return new WaitForSeconds(6f);
+@@ -1781,7 +1781,7 @@
+ 				Opacity = alpha;
+ 			});
+ 			UnityEngine.Object.Destroy(base.gameObject);
+-		}
++		}*/
+ 	}
+ 
+ 	protected virtual void EstablishPreConcludingPosture()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
