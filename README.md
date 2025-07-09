@@ -11,17 +11,10 @@ Stops soldiers' bodies from disappearing after a time, like how craters never di
 https://www.youtube.com/watch?v=YlXqJ85Dltg
 
 ### Installation
-* Navigate to your game installation (Browse Local Files on Steam)
-* Make a backup of the Assembly-CSharp.dll file, usually found in your installation at Warfare_Data\Managed
-* Use [xdelta](https://github.com/jmacd/xdelta-gpl) or a UI frontend to apply the Assembly-CSharp.xdelta patch to Assembly-CSharp.dll
+* Set up [MelonLoader](https://melonloader.co/)
+* Move warfare_permanent_corpses.dll to the Mods folder in the game directory
 
 ### Building
-* Use [ILSpy](https://github.com/icsharpcode/ILSpy) or a similar tool to decompile Assembly-CSharp.dll
-* Either
-  * Apply .xdelta patches to each decompiled .cs file
-  * Use patch.exe from e.g. your Git installation to apply Mod.Patch on all files in the directory
-* Add Unity.VisualScripting.Core.dll as a dependency
-* Build a new Assembly-CSharp.dll from the patched .cs files, you can do this with the Visual Studio Project that ILSpy provides
-
-### Contributing
-* Note that you need to use dos2unix after creating a patch with diff.exe otherwise in Windows it will not work with patch.exe
+* The game's installation directory is assumed to be at C:\Program Files (x86)\Steam\steamapps\common\Warfare Legacy Collection, if it isn't then you'll need to change Assembly references and the PostBuildEvent (see .csproj files)
+* Building is set up to automatically copy the .dll to the game directory's Mods folder and the launch profile runs a Steam command (in warfare.bat) to automatically play the game
+* Set-up for the demo is provided, however for this mod it doesn't seem to be necessary to build separate versions

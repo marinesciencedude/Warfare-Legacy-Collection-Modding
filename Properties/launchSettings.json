@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "warfare-permanent-corpses": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare.bat"
+    },
+    "warfare-permanent-corpses-demo": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare-demo.bat"
+    }
+  }
+}
