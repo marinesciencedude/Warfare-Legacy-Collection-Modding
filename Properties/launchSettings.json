@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "warfare-halt": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare.bat"
+    },
+    "warfare-halt-demo": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare-demo.bat"
+    }
+  }
+}
