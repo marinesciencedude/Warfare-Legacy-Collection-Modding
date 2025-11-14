@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "warfare-morale-disable": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare.bat"
+    },
+    "warfare-morale-disable-demo": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare-demo.bat"
+    }
+  }
+}
