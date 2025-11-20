@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "warfare-resolution-unlock": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare.bat"
+    },
+    "warfare-resolution-unlock-demo": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare-demo.bat"
+    }
+  }
+}
