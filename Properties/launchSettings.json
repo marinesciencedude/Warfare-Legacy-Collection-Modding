@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "warfare-cheats": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare.bat"
+    },
+    "warfare-cheats-demo": {
+      "commandName": "Executable",
+      "executablePath": "$(MSBuildProjectDirectory)\\warfare-demo.bat"
+    }
+  }
+}
